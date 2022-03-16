@@ -16,6 +16,7 @@ async function run() {
     const alias = core.getInput('alias');
     const keyStorePassword = core.getInput('keyStorePassword');
     const keyPassword = core.getInput('keyPassword');
+    const workingDirectory = core.getInput('workingDirectory');
 
     console.log(`Preparing to sign key @ ${releaseDir} with signing key`);
 
@@ -34,9 +35,9 @@ async function run() {
         const releaseFilePath = path.join(releaseDir, releaseFile.name);
         let signedReleaseFile = '';
         if (releaseFile.name.endsWith('.apk')) {
-          signedReleaseFile = await signApkFile(releaseFilePath, signingKey, alias, keyStorePassword, keyPassword);
+          signedReleaseFile = await signApkFile(releaseFilePath, signingKey, alias, keyStorePassword, keyPassword, workingDirectory);
         } else if (releaseFile.name.endsWith('.aab')) {
-          signedReleaseFile = await signAabFile(releaseFilePath, signingKey, alias, keyStorePassword, keyPassword);
+          signedReleaseFile = await signAabFile(releaseFilePath, signingKey, alias, keyStorePassword, keyPassword, workingDirectory);
         } else {
           core.error('No valid release file to sign, abort.');
           core.setFailed('No valid release file to sign.');

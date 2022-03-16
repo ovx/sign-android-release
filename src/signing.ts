@@ -9,7 +9,8 @@ export async function signApkFile(
     signingKeyFile: string,
     alias: string,
     keyStorePassword: string,
-    keyPassword?: string
+    keyPassword?: string,
+    workingDirectory?: string,
 ): Promise<string> {
 
     core.debug("Zipaligning APK file");
@@ -31,12 +32,16 @@ export async function signApkFile(
         '-c',
         '-v', '4',
         apkFile
-    ]);
+    ], {
+        cwd: workingDirectory,
+    });
     
     await exec.exec(`"cp"`, [
         apkFile,
         alignedApkFile
-    ]);
+    ], {
+        cwd: workingDirectory,
+    });
 
     core.debug("Signing APK file");
 
@@ -59,14 +64,18 @@ export async function signApkFile(
     }
     args.push(alignedApkFile);
 
-    await exec.exec(`"${apkSigner}"`, args);
+    await exec.exec(`"${apkSigner}"`, args, {
+        cwd: workingDirectory,
+    });
 
     // Verify
     core.debug("Verifying Signed APK");
     await exec.exec(`"${apkSigner}"`, [
         'verify',
         signedApkFile
-    ]);
+    ], {
+        cwd: workingDirectory,
+    });
 
     return signedApkFile
 }
@@ -77,6 +86,7 @@ export async function signAabFile(
     alias: string,
     keyStorePassword: string,
     keyPassword?: string,
+    workingDirectory?: string,
 ): Promise<string> {
     core.debug("Signing AAB file");
     const jarSignerPath = await io.which('jarsigner', true);
@@ -92,7 +102,9 @@ export async function signAabFile(
 
     args.push(aabFile, alias);
 
-    await exec.exec(`"${jarSignerPath}"`, args);
+    await exec.exec(`"${jarSignerPath}"`, args, {
+        cwd: workingDirectory,
+    });
 
     return aabFile
 }
