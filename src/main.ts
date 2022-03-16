@@ -11,16 +11,14 @@ async function run() {
       return;
     }
 
-    const releaseDir = core.getInput('releaseDirectory');
+    let releaseDir = core.getInput('releaseDirectory');
     const signingKeyBase64 = core.getInput('signingKeyBase64');
     const alias = core.getInput('alias');
     const keyStorePassword = core.getInput('keyStorePassword');
     const keyPassword = core.getInput('keyPassword');
-    let workingDirectory = core.getInput('workingDirectory');
+    const workingDirectory = path.resolve(process.cwd(), core.getInput('workingDirectory') || '.');
 
-    if (workingDirectory) {
-      workingDirectory = path.resolve(process.cwd(), workingDirectory);
-    }
+    releaseDir = path.resolve(workingDirectory, releaseDir);
 
     console.log(`Preparing to sign key @ ${releaseDir} with signing key`);
 
