@@ -16,7 +16,11 @@ async function run() {
     const alias = core.getInput('alias');
     const keyStorePassword = core.getInput('keyStorePassword');
     const keyPassword = core.getInput('keyPassword');
-    const workingDirectory = core.getInput('workingDirectory');
+    let workingDirectory = core.getInput('workingDirectory');
+
+    if (workingDirectory) {
+      workingDirectory = path.resolve(process.cwd(), workingDirectory);
+    }
 
     console.log(`Preparing to sign key @ ${releaseDir} with signing key`);
 
